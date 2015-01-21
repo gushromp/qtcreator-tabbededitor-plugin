@@ -10,6 +10,7 @@
 #include <coreplugin/idocument.h>
 
 #include <QShortcut>
+#include <QSignalMapper>
 
 using namespace Core::Internal;
 
@@ -130,25 +131,68 @@ void TabsForEditorsWidget::handlerEditorClosed(QList<Core::IEditor*> editors)
 
 void TabsForEditorsWidget::handleTabCloseRequested(int index)
 {
-    if (-1 < index) {
-        QWidget *tab = m_tabWidget->widget(index);
-        if (!tab)
-            return;
-        QList<Core::IEditor*> editorsToClose;
-        editorsToClose.clear();
-        if (m_tabsEditors.contains(tab)) {
-            Core::IEditor *editor = getEditor(tab);
-            if (!editor)
-                return;
-            editorsToClose.append(editor);
+    QList<int> singleIndexList;
+    singleIndexList.append(index);
 
-            Core::EditorManager::instance()->closeEditors(editorsToClose);
-            if (m_tabsEditors.contains(tab))
-                m_tabsEditors.remove(tab);
-            if (-1 < m_tabWidget->indexOf(tab))
-                m_tabWidget->removeTab(m_tabWidget->indexOf(tab));
+    handleTabCloseRequested(singleIndexList);
+}
+
+void TabsForEditorsWidget::handleTabCloseRequested(QList<int>& indices)
+{
+    QList<Core::IEditor*> editorsToClose;
+    editorsToClose.clear();
+
+    foreach(int index, indices)
+    {
+        if (-1 < index) {
+            QWidget *tab = m_tabWidget->widget(index);
+            if (!tab)
+                return;
+
+            if (m_tabsEditors.contains(tab)) {
+                Core::IEditor *editor = getEditor(tab);
+                if (!editor)
+                    continue;
+                editorsToClose.append(editor);
+            }
         }
     }
+
+    Core::EditorManager::instance()->closeEditors(editorsToClose);
+}
+
+void TabsForEditorsWidget::handleTabCloseToRight(int index)
+{
+    QList<int> indices;
+
+    for(int i = index + 1; i < m_tabsEditors.size(); i++)
+    {
+        indices.append(i);
+    }
+
+    handleTabCloseRequested(indices);
+}
+
+void TabsForEditorsWidget::handleTabCloseAllExceptOne(int index)
+{
+    QList<int> indices;
+
+    for(int i = 0; i < m_tabsEditors.size(); i++)
+    {
+        if(i != index)
+        {
+            indices.append(i);
+        }
+    }
+
+    handleTabCloseRequested(indices);
+
+}
+
+void TabsForEditorsWidget::handleTabCloseAllRequested()
+{
+    Core::EditorManager::instance()->closeAllEditors();
+
 }
 
 void TabsForEditorsWidget::selectTabAction()
@@ -188,12 +232,56 @@ void TabsForEditorsWidget::nextTabAction()
 
 void TabsForEditorsWidget::handleTabRightButtonClick(int tabIndex, QPoint &position)
 {
+    QMenu contextMenu;
 
+    QList<QAction*> actionsList;
+
+    QAction* closeTabAction = new QAction(tr("Close Tab"), this);
+    connect(closeTabAction, &QAction::triggered, this,
+            [=]() {
+        handleTabCloseRequested(tabIndex);
+    }  );
+
+    QAction* closeAllTabsExceptThisAction = new QAction(tr("Close All BUT This Tab"), this);
+    connect(closeAllTabsExceptThisAction, &QAction::triggered, this,
+            [=]() {
+        handleTabCloseAllExceptOne(tabIndex);
+    }  );
+
+    QAction* closeTabsToRightAction = new QAction(tr("Close Tabs to the Right"), this);
+    connect(closeTabsToRightAction, &QAction::triggered, this,
+            [=]() {
+        handleTabCloseToRight(tabIndex);
+    }  );
+
+    QAction* closeAllTabsAction = new QAction(tr("Close All Tabs"), this);
+    connect(closeAllTabsAction, &QAction::triggered, this, &TabsForEditorsWidget::handleTabCloseAllRequested);
+
+    actionsList.append(closeTabAction);
+    actionsList.append(closeAllTabsExceptThisAction);
+    actionsList.append(closeTabsToRightAction);
+    actionsList.append(closeAllTabsAction);
+
+
+    contextMenu.addActions(actionsList);
+    contextMenu.exec(mapToGlobal(position));
 }
 
 void TabsForEditorsWidget::handleTabMiddleButtonClick(int tabIndex, QPoint &)
 {
     handleTabCloseRequested(tabIndex);
+}
+
+void TabsForEditorsWidget::closeTab(int index)
+{
+    QWidget *tab = m_tabWidget->widget(index);
+
+    if (m_tabsEditors.contains(tab))
+        m_tabsEditors.remove(tab);
+    if (-1 < index)
+    {
+        m_tabWidget->removeTab(0);
+    }
 }
 
 void TabsForEditorsWidget::updateTabText()

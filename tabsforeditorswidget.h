@@ -26,12 +26,16 @@ public:
 
     QWidget *tabWidget() const;
 
-private slots:
+public slots:
     void updateCurrentTab(Core::IEditor *getEditor);
     void handleCurrentChanged(int index);
     void handleEditorOpened(Core::IEditor *getEditor);
     void handlerEditorClosed(QList<Core::IEditor*> editors);
     void handleTabCloseRequested(int index);
+    void handleTabCloseRequested(QList<int>& indices);
+    void handleTabCloseToRight(int index);
+    void handleTabCloseAllExceptOne(int index);
+    void handleTabCloseAllRequested();
     void selectTabAction();
     void updateTabText();
     void prevTabAction();
@@ -40,7 +44,10 @@ private slots:
     void handleTabRightButtonClick(int tabIndex, QPoint& position);
     void handleTabMiddleButtonClick(int tabIndex, QPoint& position);
 
+
 private:
+    void closeTab(int index);
+
     Core::IEditor *getEditor(QWidget *getTab) const;
     QWidget *getTab(Core::IEditor *getEditor) const;
     bool isEditorWidget(QObject *obj) const;
