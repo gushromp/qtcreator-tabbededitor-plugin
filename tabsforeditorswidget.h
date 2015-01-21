@@ -26,7 +26,7 @@ public:
 
     QWidget *tabWidget() const;
 
-public slots:
+private slots:
     void updateCurrentTab(Core::IEditor *getEditor);
     void handleCurrentChanged(int index);
     void handleEditorOpened(Core::IEditor *getEditor);
