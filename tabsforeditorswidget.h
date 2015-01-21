@@ -4,6 +4,8 @@
 #include <QMap>
 #include <QWidget>
 
+#include "qcontexttabwidget.h"
+
 QT_BEGIN_NAMESPACE
 class QShortcut;
 class QTabWidget;
@@ -34,13 +36,16 @@ private slots:
     void updateTabText();
     void prevTabAction();
     void nextTabAction();
+    void handleContextMenuEvent(QContextMenuEvent *) { }
+    void handleTabRightButtonClick(int tabIndex, QPoint& position);
+    void handleTabMiddleButtonClick(int tabIndex, QPoint& position);
 
 private:
     Core::IEditor *getEditor(QWidget *getTab) const;
     QWidget *getTab(Core::IEditor *getEditor) const;
     bool isEditorWidget(QObject *obj) const;
 
-    QTabWidget *m_tabWidget;
+    QContextTabWidget *m_tabWidget;
     QMap<QWidget *, Core::IEditor *> m_tabsEditors;
     QList<QShortcut *> m_tabShortcuts;
 };

@@ -10,7 +10,6 @@
 #include <coreplugin/idocument.h>
 
 #include <QShortcut>
-#include <QTabWidget>
 
 using namespace Core::Internal;
 
@@ -18,7 +17,7 @@ using namespace TabbedEditor::Internal;
 
 TabsForEditorsWidget::TabsForEditorsWidget(QWidget *parent) :
     QWidget(parent),
-    m_tabWidget(new QTabWidget(this))
+    m_tabWidget(new QContextTabWidget(this))
 {
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy.setHorizontalStretch(1);
@@ -43,6 +42,9 @@ TabsForEditorsWidget::TabsForEditorsWidget(QWidget *parent) :
 
     connect(m_tabWidget, SIGNAL(currentChanged(int)), SLOT(handleCurrentChanged(int)));
     connect(m_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(handleTabCloseRequested(int)));
+
+    connect(m_tabWidget, SIGNAL(tabRightClicked(int,QPoint&)), SLOT(handleTabRightButtonClick(int,QPoint&)));
+    connect(m_tabWidget, SIGNAL(tabMiddleClicked(int,QPoint&)), SLOT(handleTabMiddleButtonClick(int,QPoint&)));
 
     QString shortCutSequence = QLatin1String("Ctrl+Alt+%1");
     for (int i = 1; i <= 10; ++i) {
@@ -183,6 +185,17 @@ void TabsForEditorsWidget::nextTabAction()
     m_tabWidget->setCurrentIndex(0);
   }
 }
+
+void TabsForEditorsWidget::handleTabRightButtonClick(int tabIndex, QPoint &position)
+{
+
+}
+
+void TabsForEditorsWidget::handleTabMiddleButtonClick(int tabIndex, QPoint &)
+{
+    handleTabCloseRequested(tabIndex);
+}
+
 void TabsForEditorsWidget::updateTabText()
 {
     Core::IDocument *document = qobject_cast<Core::IDocument*>(QObject::sender());
