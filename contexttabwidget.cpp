@@ -1,29 +1,29 @@
 // Based on qmditabwidget by Diego Iastrubni
 // https://code.google.com/p/qtedit4/source/browse/tools/qmdilib/src/qmditabwidget.cpp
 
-#include "qcontexttabwidget.h"
+#include "contexttabwidget.h"
 
 #include <QTabBar>
 #include <QEvent>
 #include <QMouseEvent>
 
-QContextTabWidget::QContextTabWidget(QWidget* parent)
+ContextTabWidget::ContextTabWidget(QWidget* parent)
     : QTabWidget(parent)
 {
     tabBar()->installEventFilter(this);
 }
 
-QContextTabWidget::~QContextTabWidget()
+ContextTabWidget::~ContextTabWidget()
 {
 
 }
 
-void QContextTabWidget::handleContextMenuEvent(QContextMenuEvent *)
+void ContextTabWidget::handleContextMenuEvent(QContextMenuEvent *)
 {
 
 }
 
-bool QContextTabWidget::eventFilter(QObject *obj, QEvent *event)
+bool ContextTabWidget::eventFilter(QObject *obj, QEvent *event)
 {
         if (obj != tabBar())
                 return QObject::eventFilter(obj, event);

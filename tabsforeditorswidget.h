@@ -3,13 +3,15 @@
 
 #include <QMap>
 #include <QWidget>
-
-#include "qcontexttabwidget.h"
+#include <QMenu>
+#include <QSignalMapper>
 
 QT_BEGIN_NAMESPACE
 class QShortcut;
 class QTabWidget;
 QT_END_NAMESPACE
+
+class ContextTabWidget;
 
 namespace Core {
 class IEditor;
@@ -21,6 +23,7 @@ namespace Internal {
 class TabsForEditorsWidget : public QWidget
 {
     Q_OBJECT
+
 public:
     TabsForEditorsWidget(QWidget * parent = 0);
 
@@ -31,10 +34,11 @@ private slots:
     void handleCurrentChanged(int index);
     void handleEditorOpened(Core::IEditor *getEditor);
     void handlerEditorClosed(QList<Core::IEditor*> editors);
+    void handleContextMenuSelected(int choice);
     void handleTabCloseRequested(int index);
-    void handleTabCloseRequested(QList<int>& indices);
-    void handleTabCloseToRight(int index);
-    void handleTabCloseAllExceptOne(int index);
+    void handleTabsMultipleCloseRequested(QList<int>& indices);
+    void handleTabCloseToRightRequested(int index);
+    void handleTabCloseAllExceptOneRequested(int index);
     void handleTabCloseAllRequested();
     void selectTabAction();
     void updateTabText();
@@ -46,15 +50,26 @@ private slots:
 
 
 private:
+    void setupContextMenu();
     void closeTab(int index);
 
     Core::IEditor *getEditor(QWidget *getTab) const;
     QWidget *getTab(Core::IEditor *getEditor) const;
     bool isEditorWidget(QObject *obj) const;
 
-    QContextTabWidget *m_tabWidget;
+    ContextTabWidget *m_tabWidget;
     QMap<QWidget *, Core::IEditor *> m_tabsEditors;
     QList<QShortcut *> m_tabShortcuts;
+
+    QMenu* m_contextMenu;
+
+    QSignalMapper* m_signalMapper;
+    QList<QAction*> m_actionsList;
+    QAction *m_closeTabAction, *m_closeAllTabsExceptThisAction, *m_closeTabsToRightAction
+        , *m_closeAllTabsAction;
+
+    int m_currentTabIndex;
+
 };
 
 } // namespace Internal

@@ -30,15 +30,17 @@ DEFINES += TABBEDEDITOR_LIBRARY
 # TabbedEditor files
 
 SOURCES += \
+    contexttabwidget.cpp \
     tabbededitorplugin.cpp \
-    tabsforeditorswidget.cpp \
-    qcontexttabwidget.cpp
+    tabsforeditorswidget.cpp
+
 
 HEADERS += \
+    contexttabwidget.h \
     tabbededitorplugin.h \
     tabbededitorconstants.h \
-    tabsforeditorswidget.h \
-    qcontexttabwidget.h
+    tabsforeditorswidget.h
+
 
 RESOURCES += \
     resources/res.qrc

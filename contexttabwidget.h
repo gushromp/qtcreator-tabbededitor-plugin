@@ -1,19 +1,19 @@
 // Based on qmditabwidget by Diego Iastrubni
 // https://code.google.com/p/qtedit4/source/browse/tools/qmdilib/src/qmditabwidget.cpp
 
-#ifndef QCONTEXTTABWIDGET_H
-#define QCONTEXTTABWIDGET_H
+#ifndef CONTEXTTABWIDGET_H
+#define CONTEXTTABWIDGET_H
 
 #include <QObject>
 #include <QTabWidget>
 
-class QContextTabWidget : public QTabWidget
+class ContextTabWidget : public QTabWidget
 {
     Q_OBJECT
 
 public:
-    QContextTabWidget(QWidget* parent = 0);
-    ~QContextTabWidget();
+    ContextTabWidget(QWidget* parent = 0);
+    ~ContextTabWidget();
 
 signals:
     void tabRightClicked(int tabIndex, QPoint& position);
