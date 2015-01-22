@@ -169,9 +169,8 @@ void TabsForEditorsWidget::handleTabsMultipleCloseRequested(QList<int>& indices)
     QList<Core::IEditor*> editorsToClose;
     editorsToClose.clear();
 
-    foreach(QVariant indexVariant, indices)
+    foreach(int index, indices)
     {
-        int index = indexVariant.toInt();
 
         if (-1 < index) {
             QWidget *tab = m_tabWidget->widget(index);
