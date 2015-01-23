@@ -34,13 +34,11 @@ SOURCES += \
     tabbededitorplugin.cpp \
     tabsforeditorswidget.cpp
 
-
 HEADERS += \
     contexttabwidget.h \
     tabbededitorplugin.h \
     tabbededitorconstants.h \
     tabsforeditorswidget.h
-
 
 RESOURCES += \
     resources/res.qrc

@@ -17,8 +17,6 @@ using namespace Core::Internal;
 
 using namespace TabbedEditor::Internal;
 
-
-
 TabsForEditorsWidget::TabsForEditorsWidget(QWidget *parent) :
     QWidget(parent),
     m_tabWidget(new ContextTabWidget(this))
@@ -94,7 +92,6 @@ void TabsForEditorsWidget::updateCurrentTab(Core::IEditor *editor)
     connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int))); //restore update
 }
 
-
 void TabsForEditorsWidget::handleCurrentChanged(int index)
 {
     if (index == -1)
@@ -136,8 +133,7 @@ void TabsForEditorsWidget::handlerEditorClosed(QList<Core::IEditor*> editors)
 
 void TabsForEditorsWidget::handleContextMenuSelected(int choice)
 {
-    switch(choice)
-    {
+    switch (choice) {
     case Constants::CONTEXT_MENU_CLOSE_TAB:
         handleTabCloseRequested(m_currentTabIndex);
         break;
@@ -151,9 +147,7 @@ void TabsForEditorsWidget::handleContextMenuSelected(int choice)
         handleTabCloseAllRequested();
         break;
     }
-
 }
-
 
 void TabsForEditorsWidget::handleTabCloseRequested(int index)
 {
@@ -165,13 +159,10 @@ void TabsForEditorsWidget::handleTabCloseRequested(int index)
 
 void TabsForEditorsWidget::handleTabsMultipleCloseRequested(QList<int>& indices)
 {
-
     QList<Core::IEditor*> editorsToClose;
     editorsToClose.clear();
 
-    foreach(int index, indices)
-    {
-
+    foreach(int index, indices) {
         if (-1 < index) {
             QWidget *tab = m_tabWidget->widget(index);
             if (!tab)
@@ -194,10 +185,7 @@ void TabsForEditorsWidget::handleTabCloseToRightRequested(int index)
     QList<int> indices;
 
     for(int i = index + 1; i < m_tabsEditors.size(); i++)
-    {
         indices.append(i);
-    }
-
 
     handleTabsMultipleCloseRequested(indices);
 }
@@ -207,21 +195,15 @@ void TabsForEditorsWidget::handleTabCloseAllExceptOneRequested(int index)
     QList<int> indices;
 
     for(int i = 0; i < m_tabsEditors.size(); i++)
-    {
         if(i != index)
-        {
             indices.append(i);
-        }
-    }
 
     handleTabsMultipleCloseRequested(indices);
-
 }
 
 void TabsForEditorsWidget::handleTabCloseAllRequested()
 {
     Core::EditorManager::instance()->closeAllEditors();
-
 }
 
 void TabsForEditorsWidget::selectTabAction()
@@ -237,31 +219,22 @@ void TabsForEditorsWidget::prevTabAction()
 {
   int currentIndex = m_tabWidget->currentIndex();
   if (currentIndex >= 1)
-  {
     m_tabWidget->setCurrentIndex(currentIndex - 1);
-  }
   else
-  {
     m_tabWidget->setCurrentIndex(m_tabWidget->count() - 1);
-  }
 }
 
 void TabsForEditorsWidget::nextTabAction()
 {
   int currentIndex = m_tabWidget->currentIndex();
   if (currentIndex < m_tabWidget->count() - 1)
-  {
     m_tabWidget->setCurrentIndex(currentIndex + 1);
-  }
   else
-  {
     m_tabWidget->setCurrentIndex(0);
-  }
 }
 
 void TabsForEditorsWidget::handleTabRightButtonClick(int tabIndex, QPoint &position)
 {
-
     m_currentTabIndex = tabIndex;
 
     m_contextMenu->exec(mapToGlobal(position));
@@ -269,7 +242,6 @@ void TabsForEditorsWidget::handleTabRightButtonClick(int tabIndex, QPoint &posit
 
 void TabsForEditorsWidget::handleTabMiddleButtonClick(int tabIndex, QPoint &)
 {
-
     handleTabCloseRequested(tabIndex);
 }
 
@@ -283,7 +255,6 @@ void TabsForEditorsWidget::setupContextMenu()
     m_closeAllTabsAction = new QAction(tr("Close All Tabs"), this);
 
     m_signalMapper = new QSignalMapper(this);
-
 
     m_signalMapper->setMapping(m_closeTabAction, Constants::CONTEXT_MENU_CLOSE_TAB);
     m_signalMapper->setMapping(m_closeAllTabsExceptThisAction, Constants::CONTEXT_MENU_CLOSE_ALL_BUT_THIS_TAB);
