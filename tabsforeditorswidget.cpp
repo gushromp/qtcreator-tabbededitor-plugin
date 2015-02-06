@@ -135,13 +135,13 @@ void TabsForEditorsWidget::handleContextMenuSelected(int choice)
 {
     switch (choice) {
     case Constants::CONTEXT_MENU_CLOSE_TAB:
-        handleTabCloseRequested(m_currentTabIndex);
+        handleTabCloseRequested();
         break;
     case Constants::CONTEXT_MENU_CLOSE_ALL_BUT_THIS_TAB:
-        handleTabCloseAllExceptOneRequested(m_currentTabIndex);
+        handleTabCloseAllExceptOneRequested();
         break;
     case Constants::CONTEXT_MENU_CLOSE_TABS_TO_THE_RIGHT:
-        handleTabCloseToRightRequested(m_currentTabIndex);
+        handleTabCloseToRightRequested();
         break;
     case Constants::CONTEXT_MENU_CLOSE_ALL_TABS:
         handleTabCloseAllRequested();
@@ -180,22 +180,27 @@ void TabsForEditorsWidget::handleTabsMultipleCloseRequested(QList<int>& indices)
     Core::EditorManager::instance()->closeEditors(editorsToClose);
 }
 
-void TabsForEditorsWidget::handleTabCloseToRightRequested(int index)
+void TabsForEditorsWidget::handleTabCloseRequested()
+{
+    handleTabCloseRequested(m_currentTabIndex);
+}
+
+void TabsForEditorsWidget::handleTabCloseToRightRequested()
 {
     QList<int> indices;
 
-    for(int i = index + 1; i < m_tabsEditors.size(); i++)
+    for(int i = m_currentTabIndex + 1; i < m_tabsEditors.size(); i++)
         indices.append(i);
 
     handleTabsMultipleCloseRequested(indices);
 }
 
-void TabsForEditorsWidget::handleTabCloseAllExceptOneRequested(int index)
+void TabsForEditorsWidget::handleTabCloseAllExceptOneRequested()
 {
     QList<int> indices;
 
     for(int i = 0; i < m_tabsEditors.size(); i++)
-        if(i != index)
+        if(i != m_currentTabIndex)
             indices.append(i);
 
     handleTabsMultipleCloseRequested(indices);
@@ -254,24 +259,15 @@ void TabsForEditorsWidget::setupContextMenu()
     m_closeTabsToRightAction = new QAction(tr("Close Tabs to the Right"), this);
     m_closeAllTabsAction = new QAction(tr("Close All Tabs"), this);
 
-    m_signalMapper = new QSignalMapper(this);
-
-    m_signalMapper->setMapping(m_closeTabAction, Constants::CONTEXT_MENU_CLOSE_TAB);
-    m_signalMapper->setMapping(m_closeAllTabsExceptThisAction, Constants::CONTEXT_MENU_CLOSE_ALL_BUT_THIS_TAB);
-    m_signalMapper->setMapping(m_closeTabsToRightAction, Constants::CONTEXT_MENU_CLOSE_TABS_TO_THE_RIGHT);
-    m_signalMapper->setMapping(m_closeAllTabsAction, Constants::CONTEXT_MENU_CLOSE_ALL_TABS);
-
-    connect(m_closeTabAction, SIGNAL(triggered()), m_signalMapper, SLOT(map()));
-    connect(m_closeAllTabsExceptThisAction, SIGNAL(triggered()), m_signalMapper, SLOT(map()));
-    connect(m_closeTabsToRightAction, SIGNAL(triggered()), m_signalMapper, SLOT(map()));
-    connect(m_closeAllTabsAction, SIGNAL(triggered()), m_signalMapper, SLOT(map()));
+    connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(handleTabCloseAllRequested()));
+    connect(m_closeAllTabsExceptThisAction, SIGNAL(triggered()), this, SLOT(handleTabCloseAllExceptOneRequested()));
+    connect(m_closeTabsToRightAction, SIGNAL(triggered()), this, SLOT(handleTabCloseToRightRequested()));
+    connect(m_closeAllTabsAction, SIGNAL(triggered()), this, SLOT(handleTabCloseAllRequested()));
 
     m_actionsList.append(m_closeTabAction);
     m_actionsList.append(m_closeAllTabsExceptThisAction);
     m_actionsList.append(m_closeTabsToRightAction);
     m_actionsList.append(m_closeAllTabsAction);
-
-    connect(m_signalMapper, SIGNAL(mapped(int)), this, SLOT(handleContextMenuSelected(int)));
 
     m_contextMenu->addActions(m_actionsList);
 }
@@ -336,4 +332,3 @@ bool TabsForEditorsWidget::isEditorWidget(QObject *obj) const
     }
     return false;
 }
-

@@ -37,8 +37,9 @@ private slots:
     void handleContextMenuSelected(int choice);
     void handleTabCloseRequested(int index);
     void handleTabsMultipleCloseRequested(QList<int>& indices);
-    void handleTabCloseToRightRequested(int index);
-    void handleTabCloseAllExceptOneRequested(int index);
+    void handleTabCloseRequested();
+    void handleTabCloseToRightRequested();
+    void handleTabCloseAllExceptOneRequested();
     void handleTabCloseAllRequested();
     void selectTabAction();
     void updateTabText();
@@ -63,10 +64,12 @@ private:
 
     QMenu* m_contextMenu;
 
-    QSignalMapper* m_signalMapper;
     QList<QAction*> m_actionsList;
-    QAction *m_closeTabAction, *m_closeAllTabsExceptThisAction, *m_closeTabsToRightAction
-        , *m_closeAllTabsAction;
+
+    QAction *m_closeTabAction,
+            *m_closeAllTabsExceptThisAction,
+            *m_closeTabsToRightAction,
+            *m_closeAllTabsAction;
 
     int m_currentTabIndex;
 

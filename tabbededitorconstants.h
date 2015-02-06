@@ -18,4 +18,3 @@ const int CONTEXT_MENU_CLOSE_ALL_TABS = 4;
 } // namespace Constants
 
 #endif // TABBEDEDITORCONSTANTS_H
-
